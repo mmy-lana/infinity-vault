@@ -14,6 +14,7 @@ import { CommandPalette } from '@/components/organisms/CommandPalette';
 import { ProjectDetailModal } from '@/components/organisms/ProjectDetailModal';
 import { Button } from '@/components/atoms/Button';
 import { EXTERNAL_LINKS } from '@/lib/constants';
+import { Logo } from '@/components/atoms/Logo';
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -240,7 +241,10 @@ export default function Home() {
       <footer className="relative z-10 w-full border-t border-[#5D3025]/60 bg-[#140805]/95 py-12 pb-24 lg:pb-12 px-4 sm:px-6 lg:px-8 font-mono text-xs text-[#BD6547]">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
           <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3">
-            <span className="font-bold text-[#DF865C]">MMYLANA // 無限城</span>
+            <div className="flex items-center gap-2">
+              <Logo className="w-5 h-5 rounded-md" />
+              <span className="font-bold text-[#DF865C]">MMYLANA // 無限城</span>
+            </div>
             <span className="hidden sm:inline text-[#5D3025]">|</span>
             <span>Mugen Bento Architecture System</span>
           </div>

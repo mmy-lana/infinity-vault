@@ -16,7 +16,12 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "MMYLANA // 無限城 — Ambient Mugen Bento Stream",
   description:
-    "High-density inertia-driven continuous Bento stream featuring 90 frontend web applications, devtools, and zero-dependency diagnostic flagship engines over an ambient 3D Mugen Castle WebGL canvas.",
+    "High-density inertia-driven continuous Bento stream featuring 110+ web applications, devtools, and zero-dependency diagnostic flagship engines over an ambient 3D Mugen Castle WebGL canvas.",
+  icons: {
+    icon: "/icon.svg",
+    shortcut: "/icon.svg",
+    apple: "/icon.svg",
+  },
 };
 
 export default function RootLayout({

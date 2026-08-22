@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Command, ChevronUp, ExternalLink, Sparkles, Shield } from 'lucide-react';
 import { EXTERNAL_LINKS } from '@/lib/constants';
+import { Logo } from '@/components/atoms/Logo';
 
 interface SpatialHUDProps {
   onOpenCommandPalette: () => void;
@@ -47,7 +48,7 @@ export const SpatialHUD: React.FC<SpatialHUDProps> = ({
               href={EXTERNAL_LINKS.portfolioSubdomain}
               className="flex items-center gap-2 text-xs sm:text-sm font-bold font-mono text-[#DF865C] hover:text-[#EB7340] transition-colors"
             >
-              <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-[#EB7340] animate-ping" />
+              <Logo className="w-6 h-6 rounded-md" />
               <span>MMYLANA // 無限城</span>
             </a>
             <span className="hidden md:inline-flex text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#140805] text-[#BD6547] border border-[#5D3025]">
