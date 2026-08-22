@@ -1,26 +1,83 @@
 @import "tailwindcss";
 
+@theme {
+  --color-abyssal-void: #140805;
+  --color-dark-mahogany: #2F1A17;
+  --color-timber-frame: #5D3025;
+  --color-warm-cedar: #914B35;
+  --color-deep-crimson: #8C341C;
+  --color-volumetric-shadow: #5F1906;
+  --color-lantern-crimson: #C04D2D;
+  --color-terracotta: #BD6547;
+  --color-shoji-amber: #EB7340;
+  --color-golden-glow: #DF865C;
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #140805;
+  --foreground: #DF865C;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+* {
+  box-sizing: border-box;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  background-color: #140805;
+  color: #DF865C;
+  color-scheme: dark;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: #140805;
+  color: #DF865C;
+  min-height: 100vh;
+  overflow-x: hidden;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background-color: #C04D2D;
+  color: #ffffff;
+}
+
+/* Custom Mugen Castle Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #140805;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #5D3025;
+  border-radius: 9999px;
+  border: 1px solid #914B35;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #C04D2D;
+}
+
+/* Shoji Grid Ambient Background Texture */
+.mugen-grid {
+  background-image: 
+    linear-gradient(to right, rgba(93, 48, 37, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(93, 48, 37, 0.08) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+.mugen-radial-vignette {
+  background: radial-gradient(circle at 50% 30%, transparent 0%, #140805 85%);
+}
+
+.shoji-card-glow {
+  box-shadow: 0 0 30px -10px rgba(235, 115, 64, 0.15);
 }
