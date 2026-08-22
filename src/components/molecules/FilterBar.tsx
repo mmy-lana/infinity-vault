@@ -35,16 +35,16 @@ export const FilterBar: React.FC<FilterBarProps> = ({
   return (
     <div className="w-full space-y-4">
       {/* Top Search & Filter Count Line */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
         <div className="w-full sm:max-w-md">
           <SearchInput
             value={searchQuery}
             onChange={onSearchChange}
-            placeholder="Search projects by name, stack, or aesthetic..."
+            placeholder="Search by name, stack, aesthetic..."
           />
         </div>
 
-        <div className="flex items-center gap-2 self-end sm:self-auto font-mono text-xs text-[#BD6547]">
+        <div className="flex items-center gap-2 self-start sm:self-auto font-mono text-xs text-[#BD6547]">
           <SlidersHorizontal className="w-3.5 h-3.5 text-[#EB7340]" />
           <span>
             Showing <strong className="text-[#EB7340]">{totalFiltered}</strong> of {totalCount} Projects
@@ -53,8 +53,11 @@ export const FilterBar: React.FC<FilterBarProps> = ({
       </div>
 
       {/* Category Pills Switchboard */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none font-mono">
-        <span className="text-[11px] text-[#BD6547] pr-1 select-none shrink-0 uppercase tracking-wider">
+      <div
+        data-lenis-prevent
+        className="flex items-center gap-1.5 overflow-x-auto pb-1.5 pt-0.5 scrollbar-none font-mono -mx-1 px-1"
+      >
+        <span className="text-[10px] sm:text-[11px] text-[#BD6547] pr-1 select-none shrink-0 uppercase tracking-wider">
           Category:
         </span>
         {CATEGORIES.map((cat) => {
@@ -65,7 +68,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
               type="button"
               onClick={() => onCategoryChange(cat)}
               className={cn(
-                'px-3 py-1 text-xs rounded-lg border transition-all duration-150 shrink-0 cursor-pointer select-none',
+                'px-2.5 sm:px-3 py-1 text-[11px] sm:text-xs rounded-lg border transition-all duration-150 shrink-0 cursor-pointer select-none',
                 isActive
                   ? 'bg-[#EB7340] border-[#EB7340] text-[#140805] font-bold shadow-[0_0_12px_rgba(235,115,64,0.35)]'
                   : 'bg-[#2F1A17]/80 border-[#5D3025] text-[#DF865C] hover:border-[#914B35] hover:text-[#EB7340]'

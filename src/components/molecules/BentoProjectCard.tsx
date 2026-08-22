@@ -64,12 +64,12 @@ export const BentoProjectCard: React.FC<BentoProjectCardProps> = ({ project, onS
       onMouseLeave={handleMouseLeave}
       onClick={() => onSelect(project)}
       style={{
-        rotateX,
-        rotateY,
+        rotateX: typeof window !== 'undefined' && window.innerWidth > 768 ? rotateX : 0,
+        rotateY: typeof window !== 'undefined' && window.innerWidth > 768 ? rotateY : 0,
         transformStyle: 'preserve-3d',
       }}
       whileHover={{ y: -4 }}
-      className="relative flex flex-col justify-between p-5 rounded-xl bg-[#2F1A17]/85 border border-[#5D3025] hover:border-[#914B35] transition-colors duration-200 cursor-pointer overflow-hidden group select-none shadow-lg backdrop-blur-xs"
+      className="relative flex flex-col justify-between p-4 sm:p-5 rounded-xl bg-[#2F1A17]/85 border border-[#5D3025] hover:border-[#914B35] transition-colors duration-200 cursor-pointer overflow-hidden group select-none shadow-lg backdrop-blur-xs"
     >
       {/* Dynamic Cursor Border Glow */}
       <div

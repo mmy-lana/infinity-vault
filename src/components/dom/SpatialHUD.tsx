@@ -33,15 +33,15 @@ export const SpatialHUD: React.FC<SpatialHUDProps> = ({
   return (
     <>
       {/* Top Floating Glass Header HUD */}
-      <header className="fixed top-4 inset-x-0 z-40 max-w-7xl mx-auto px-4 sm:px-6 pointer-events-none">
-        <div className="flex items-center justify-between p-2.5 sm:px-4 rounded-2xl bg-[#2F1A17]/85 border border-[#5D3025] backdrop-blur-md shadow-2xl pointer-events-auto">
+      <header className="fixed top-3 sm:top-4 inset-x-0 z-40 max-w-7xl mx-auto px-3 sm:px-6 pointer-events-none">
+        <div className="flex items-center justify-between p-2 sm:p-2.5 sm:px-4 rounded-xl sm:rounded-2xl bg-[#2F1A17]/90 border border-[#5D3025] backdrop-blur-md shadow-2xl pointer-events-auto">
           {/* Brand Logo & Telemetry Beacon */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <a
               href={EXTERNAL_LINKS.portfolioSubdomain}
-              className="flex items-center gap-2 text-sm font-bold font-mono text-[#DF865C] hover:text-[#EB7340] transition-colors"
+              className="flex items-center gap-2 text-xs sm:text-sm font-bold font-mono text-[#DF865C] hover:text-[#EB7340] transition-colors"
             >
-              <span className="w-2 h-2 rounded-full bg-[#EB7340] animate-ping" />
+              <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-[#EB7340] animate-ping" />
               <span>MMYLANA // 無限城</span>
             </a>
             <span className="hidden md:inline-flex text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#140805] text-[#BD6547] border border-[#5D3025]">
@@ -50,25 +50,25 @@ export const SpatialHUD: React.FC<SpatialHUDProps> = ({
           </div>
 
           {/* Quick Actions & ⌘K Palette Button */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-1.5 sm:gap-3">
             <button
               type="button"
               onClick={onOpenCommandPalette}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#140805] border border-[#5D3025] hover:border-[#EB7340] text-xs font-mono text-[#DF865C] transition-all duration-150 cursor-pointer shadow-xs"
+              className="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg bg-[#140805] border border-[#5D3025] hover:border-[#EB7340] text-[11px] sm:text-xs font-mono text-[#DF865C] transition-all duration-150 cursor-pointer shadow-xs"
             >
-              <Command className="w-3.5 h-3.5 text-[#EB7340]" />
-              <span className="hidden sm:inline">Search</span>
-              <span className="text-[10px] text-[#BD6547] ml-1">⌘K</span>
+              <Command className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#EB7340]" />
+              <span>Search</span>
+              <span className="text-[10px] text-[#BD6547] hidden sm:inline ml-1">⌘K</span>
             </button>
 
             <a
               href={EXTERNAL_LINKS.hub}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#2F1A17] hover:bg-[#5D3025]/50 border border-[#5D3025] text-xs font-mono text-[#DF865C] transition-colors"
+              className="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg bg-[#2F1A17] hover:bg-[#5D3025]/50 border border-[#5D3025] text-[11px] sm:text-xs font-mono text-[#DF865C] transition-colors"
             >
               <span className="hidden sm:inline">Main Hub</span>
-              <ExternalLink className="w-3.5 h-3.5 text-[#BD6547]" />
+              <ExternalLink className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#BD6547]" />
             </a>
           </div>
         </div>

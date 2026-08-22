@@ -24,6 +24,22 @@ export default function Home() {
   const [activeProject, setActiveProject] = useState<ProjectItem | null>(null);
   const [isCommandOpen, setIsCommandOpen] = useState(false);
 
+  // Global ⌘K and Escape Shortcut Listener
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setIsCommandOpen((prev) => !prev);
+      }
+      if (e.key === 'Escape') {
+        setIsCommandOpen(false);
+        setActiveProject(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   // Filtered 90-Project Stream
   const filteredProjects = useMemo(() => {
     return PROJECTS_DATA.filter((p) => {
@@ -80,7 +96,7 @@ export default function Home() {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="text-4xl sm:text-6xl md:text-7xl font-extrabold font-mono text-[#DF865C] tracking-tight max-w-4xl"
+          className="text-3xl sm:text-5xl md:text-7xl font-extrabold font-mono text-[#DF865C] tracking-tight max-w-4xl px-2 break-words"
         >
           Infinity Stream of Frontend Craftsmanship
         </motion.h1>
@@ -89,7 +105,7 @@ export default function Home() {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="mt-4 text-base sm:text-lg text-[#BD6547] max-w-2xl font-sans leading-relaxed"
+          className="mt-4 text-sm sm:text-base md:text-lg text-[#BD6547] max-w-2xl font-sans leading-relaxed px-4"
         >
           An inertia-driven catalog containing 90 crafted web applications, devtools, and fullstack platforms alongside zero-dependency diagnostic flagship engines.
         </motion.p>
@@ -99,11 +115,12 @@ export default function Home() {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="mt-8 flex flex-wrap items-center justify-center gap-4"
+          className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3 w-full max-w-md sm:max-w-none px-4"
         >
           <Button
             variant="flame"
             size="lg"
+            className="w-full sm:w-auto"
             onClick={() => {
               document.getElementById('bento-stream')?.scrollIntoView({ behavior: 'smooth' });
             }}
@@ -115,6 +132,7 @@ export default function Home() {
           <Button
             variant="secondary"
             size="lg"
+            className="w-full sm:w-auto"
             onClick={() => setIsCommandOpen(true)}
             icon={<Terminal className="w-4 h-4" />}
           >

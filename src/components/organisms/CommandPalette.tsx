@@ -23,19 +23,17 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // Body Scroll Lock while modal is open
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault();
-        isOpen ? onClose() : void 0;
-      }
-      if (e.key === 'Escape' && isOpen) {
-        onClose();
-      }
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
     };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
+  }, [isOpen]);
 
   const filteredProjects = PROJECTS_DATA.filter((p) => {
     const search = query.toLowerCase();
@@ -62,14 +60,17 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-start justify-center pt-20 px-4">
+      <div
+        data-lenis-prevent
+        className="fixed inset-0 z-50 flex items-start sm:items-center justify-center pt-14 sm:pt-0 px-3 sm:px-4"
+      >
         {/* Backdrop */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={onClose}
-          className="fixed inset-0 bg-[#140805]/80 backdrop-blur-md"
+          className="fixed inset-0 bg-[#140805]/85 backdrop-blur-md"
         />
 
         {/* Command Palette Window */}
@@ -78,11 +79,11 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: -10 }}
           transition={{ duration: 0.15 }}
-          className="relative w-full max-w-2xl rounded-2xl bg-[#2F1A17] border border-[#5D3025] shadow-2xl overflow-hidden z-10 flex flex-col font-mono"
+          className="relative w-full max-w-2xl max-h-[85vh] rounded-2xl bg-[#2F1A17] border border-[#5D3025] shadow-2xl overflow-hidden z-10 flex flex-col font-mono"
         >
           {/* Search Header */}
-          <div className="flex items-center px-4 border-b border-[#5D3025]/80 bg-[#140805]/90">
-            <Search className="w-5 h-5 text-[#EB7340] shrink-0 mr-3" />
+          <div className="flex items-center px-3.5 sm:px-4 border-b border-[#5D3025]/80 bg-[#140805]/95">
+            <Search className="w-4 h-4 sm:w-5 sm:h-5 text-[#EB7340] shrink-0 mr-2 sm:mr-3" />
             <input
               ref={inputRef}
               type="text"
@@ -91,16 +92,23 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                 setQuery(e.target.value);
                 setSelectedIndex(0);
               }}
-              placeholder="Type a project, framework, or command (e.g. 'React', 'fetch-doctor')..."
-              className="w-full bg-transparent py-4 text-sm text-[#DF865C] placeholder-[#BD6547]/60 outline-hidden font-mono"
+              placeholder="Search project, stack, or command..."
+              className="w-full bg-transparent py-3.5 sm:py-4 text-xs sm:text-sm text-[#DF865C] placeholder-[#BD6547]/60 outline-hidden font-mono"
             />
-            <div className="flex items-center gap-1 px-2 py-1 rounded bg-[#2F1A17] border border-[#5D3025] text-[10px] text-[#BD6547] shrink-0 select-none">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex items-center gap-1 px-2 py-1 rounded bg-[#2F1A17] border border-[#5D3025] text-[10px] text-[#BD6547] shrink-0 select-none hover:text-[#EB7340]"
+            >
               <span>ESC</span>
-            </div>
+            </button>
           </div>
 
           {/* Results List */}
-          <div className="max-h-[380px] overflow-y-auto p-2 space-y-4">
+          <div
+            data-lenis-prevent
+            className="flex-1 max-h-[60vh] sm:max-h-[380px] overflow-y-auto p-2 space-y-4 overscroll-contain"
+          >
             {/* Quick Portals */}
             {!query && (
               <div>

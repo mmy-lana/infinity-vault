@@ -18,6 +18,18 @@ interface ProjectDetailModalProps {
 }
 
 export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project, onClose }) => {
+  // Body Scroll Lock while modal is open
+  React.useEffect(() => {
+    if (project) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [project]);
+
   if (!project) return null;
 
   const catBadge = getCategoryBadge(project.category);
@@ -34,7 +46,10 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project,
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div
+        data-lenis-prevent
+        className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4"
+      >
         {/* Backdrop */}
         <motion.div
           initial={{ opacity: 0 }}
@@ -50,7 +65,7 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project,
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.94, y: 12 }}
           transition={{ duration: 0.2 }}
-          className="relative w-full max-w-xl rounded-2xl bg-[#2F1A17] border border-[#5D3025] shadow-2xl overflow-hidden z-10 flex flex-col font-mono"
+          className="relative w-full max-w-xl max-h-[90vh] rounded-2xl bg-[#2F1A17] border border-[#5D3025] shadow-2xl overflow-hidden z-10 flex flex-col font-mono"
         >
           {/* Header Bar */}
           <div className="flex items-center justify-between px-6 py-4 border-b border-[#5D3025]/80 bg-[#140805]/90">
@@ -76,7 +91,10 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project,
           </div>
 
           {/* Modal Content */}
-          <div className="p-6 space-y-5 max-h-[75vh] overflow-y-auto">
+          <div
+            data-lenis-prevent
+            className="p-4 sm:p-6 space-y-4 sm:space-y-5 overflow-y-auto overscroll-contain"
+          >
             {/* Title & Description */}
             <div>
               <h3 className="text-xl font-bold text-[#DF865C] leading-snug">
