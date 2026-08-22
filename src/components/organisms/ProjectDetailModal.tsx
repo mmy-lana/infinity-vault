@@ -116,6 +116,24 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({ project,
               </p>
             </div>
 
+            {/* Deployment Target & Architecture Notes (if applicable) */}
+            {(project.deploymentTarget || project.notes) && (
+              <div className="p-4 rounded-xl bg-[#140805]/70 border border-[#5D3025]/60 space-y-2">
+                {project.deploymentTarget && (
+                  <div className="text-xs">
+                    <span className="text-[#BD6547] uppercase font-semibold text-[10px] block mb-0.5">Deployment Target:</span>
+                    <span className="text-[#DF865C] font-mono text-xs">{project.deploymentTarget}</span>
+                  </div>
+                )}
+                {project.notes && (
+                  <div className="text-xs pt-1 border-t border-[#5D3025]/40">
+                    <span className="text-[#BD6547] uppercase font-semibold text-[10px] block mb-0.5">Architecture Notes:</span>
+                    <span className="text-[#DF865C]/90 font-sans text-xs">{project.notes}</span>
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Tech Stack & Framework */}
             <div className="space-y-2">
               <span className="text-xs text-[#BD6547] uppercase tracking-wider font-semibold">

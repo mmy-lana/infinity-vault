@@ -29,6 +29,8 @@ export interface ProjectItem {
   description: string;
   tags: string[];
   featured?: boolean;
+  deploymentTarget?: string;
+  notes?: string;
 }
 
 export interface FlagshipItem {

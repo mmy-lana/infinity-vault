@@ -107,7 +107,7 @@ export default function Home() {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="mt-4 text-sm sm:text-base md:text-lg text-[#BD6547] max-w-2xl font-sans leading-relaxed px-4"
         >
-          An inertia-driven catalog containing 90 crafted web applications, devtools, and fullstack platforms alongside zero-dependency diagnostic flagship engines.
+          An inertia-driven catalog containing 110+ crafted web applications, devtools, and fullstack platforms alongside zero-dependency diagnostic flagship engines.
         </motion.p>
 
         {/* Hero CTA Action Row */}
@@ -126,7 +126,7 @@ export default function Home() {
             }}
             icon={<Compass className="w-4 h-4 fill-current" />}
           >
-            Explore 90-Project Bento
+            Explore 110+ Project Bento
           </Button>
 
           <Button
@@ -148,11 +148,11 @@ export default function Home() {
           className="mt-14 grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-4xl font-mono"
         >
           <div className="p-4 rounded-xl bg-[#2F1A17]/60 border border-[#5D3025] text-center">
-            <span className="text-2xl sm:text-3xl font-extrabold text-[#EB7340]">90</span>
+            <span className="text-2xl sm:text-3xl font-extrabold text-[#EB7340]">{PROJECTS_DATA.length}</span>
             <p className="text-xs text-[#BD6547] mt-1">Curated Projects</p>
           </div>
           <div className="p-4 rounded-xl bg-[#2F1A17]/60 border border-[#5D3025] text-center">
-            <span className="text-2xl sm:text-3xl font-extrabold text-[#DF865C]">34</span>
+            <span className="text-2xl sm:text-3xl font-extrabold text-[#DF865C]">{completedCount}</span>
             <p className="text-xs text-[#BD6547] mt-1">Completed Systems</p>
           </div>
           <div className="p-4 rounded-xl bg-[#2F1A17]/60 border border-[#5D3025] text-center">
