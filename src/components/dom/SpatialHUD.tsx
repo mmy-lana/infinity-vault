@@ -17,10 +17,16 @@ export const SpatialHUD: React.FC<SpatialHUDProps> = ({
   totalCount,
 }) => {
   const [showBackToTop, setShowBackToTop] = useState(false);
+  const [isNearBottom, setIsNearBottom] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      setShowBackToTop(window.scrollY > 400);
+      const scrollY = window.scrollY;
+      const scrollHeight = document.documentElement.scrollHeight;
+      const clientHeight = window.innerHeight;
+
+      setShowBackToTop(scrollY > 400);
+      setIsNearBottom(scrollY + clientHeight >= scrollHeight - 140);
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
@@ -96,17 +102,27 @@ export const SpatialHUD: React.FC<SpatialHUDProps> = ({
       </AnimatePresence>
 
       {/* Spatial Telemetry Status Capsule */}
-      <div className="fixed bottom-6 left-6 z-30 hidden lg:flex items-center gap-3 p-2.5 px-3.5 rounded-xl bg-[#140805]/90 border border-[#5D3025] backdrop-blur-md font-mono text-[11px] text-[#BD6547] pointer-events-none shadow-xl">
-        <span className="flex items-center gap-1 text-[#EB7340]">
-          <Sparkles className="w-3 h-3" />
-          <span>{completedCount} / {totalCount} Built</span>
-        </span>
-        <span className="text-[#5D3025]">|</span>
-        <span className="flex items-center gap-1">
-          <Shield className="w-3 h-3 text-[#DF865C]" />
-          <span>Mugen Bento Stream Active</span>
-        </span>
-      </div>
+      <AnimatePresence>
+        {!isNearBottom && (
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 15 }}
+            transition={{ duration: 0.2 }}
+            className="fixed bottom-6 left-6 z-30 hidden lg:flex items-center gap-3 p-2.5 px-3.5 rounded-xl bg-[#140805]/90 border border-[#5D3025] backdrop-blur-md font-mono text-[11px] text-[#BD6547] pointer-events-none shadow-xl"
+          >
+            <span className="flex items-center gap-1 text-[#EB7340]">
+              <Sparkles className="w-3 h-3" />
+              <span>{completedCount} / {totalCount} Built</span>
+            </span>
+            <span className="text-[#5D3025]">|</span>
+            <span className="flex items-center gap-1">
+              <Shield className="w-3 h-3 text-[#DF865C]" />
+              <span>Mugen Bento Stream Active</span>
+            </span>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 };

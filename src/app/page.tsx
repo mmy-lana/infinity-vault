@@ -237,15 +237,15 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="relative z-10 w-full border-t border-[#5D3025]/60 bg-[#140805]/90 py-12 px-4 sm:px-6 lg:px-8 font-mono text-xs text-[#BD6547]">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
-          <div className="flex flex-col sm:flex-row items-center gap-3">
+      <footer className="relative z-10 w-full border-t border-[#5D3025]/60 bg-[#140805]/95 py-12 pb-24 lg:pb-12 px-4 sm:px-6 lg:px-8 font-mono text-xs text-[#BD6547]">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3">
             <span className="font-bold text-[#DF865C]">MMYLANA // 無限城</span>
             <span className="hidden sm:inline text-[#5D3025]">|</span>
             <span>Mugen Bento Architecture System</span>
           </div>
 
-          <div className="flex items-center gap-4 text-xs">
+          <div className="flex items-center gap-6 text-xs">
             <a
               href={EXTERNAL_LINKS.hub}
               target="_blank"
