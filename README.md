@@ -1,36 +1,79 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🏯 MMYLANA // 無限城 — Ambient Mugen Bento Stream
 
-## Getting Started
+[![Next.js 16](https://img.shields.io/badge/Next.js-16-black?style=flat-square&logo=next.js)](https://nextjs.org/)
+[![React 19](https://img.shields.io/badge/React-19-black?style=flat-square&logo=react)](https://react.dev/)
+[![Three.js](https://img.shields.io/badge/Three.js-WebGL-black?style=flat-square&logo=three.js)](https://threejs.org/)
+[![Tailwind CSS v4](https://img.shields.io/badge/Tailwind-v4-black?style=flat-square&logo=tailwindcss)](https://tailwindcss.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-EB7340.svg?style=flat-square)](LICENSE)
 
-First, run the development server:
+An ambient, inertia-driven infinite Bento catalog featuring **110+ crafted web applications, developer tooling, and fullstack platforms** layered over a reactive 3D WebGL Mugen Castle scene with floating paper lanterns and upward swirling embers.
+
+Deployed at [`portfolio.mmylana.my.id`](https://portfolio.mmylana.my.id) (Counterpart to [`mmylana.my.id`](https://mmylana.my.id)).
+
+---
+
+## ⚡ Architectural Highlights
+
+- **Flagship Core Diagnostic Sanctuary**:
+  - [`fetch-doctor`](https://github.com/mmy-lana/fetch-doctor): Zero-dependency, SOLID HTTP request profiler, zombie fetch detector, and CDP network audit suite.
+  - [`leak-doctor`](https://github.com/mmy-lana/leak-doctor): Zero-dependency frontend memory leak diagnostic engine with `WeakRef` and `FinalizationRegistry` heap assertions.
+- **110+ Project Catalog Engine**: Spanning Developer Tooling, Fullstack Applications (Node.js/Express, NestJS, FastAPI, Django, Go Gin, ASP.NET Core 9, Spring Boot 3, Rails, Rust Axum, Laravel 11), Creative UIs, and Utilities.
+- **3D Mugen WebGL Atmosphere**: `@react-three/fiber` floating lanterns and scroll-velocity reactive embers.
+- **Micro-Interactions**: 3D gyro tilt cards, cursor-tracking amber border glows (`#EB7340`), command palette (`⌘K`), and drawer inspector with live clone snippets.
+- **Smooth Inertia Scroll**: Native physics-driven scroll wrapper powered by `lenis`.
+
+---
+
+## 🎨 10-Color Mugen Castle Design System
+
+| Token | Hex Code | Role |
+| :--- | :--- | :--- |
+| **Abyssal Void** | `#140805` | Background canvas surface |
+| **Dark Mahogany** | `#2F1A17` | Bento card base surface |
+| **Timber Frame** | `#5D3025` | Default architectural borders |
+| **Warm Cedar** | `#914B35` | Hover borders & interactive edges |
+| **Deep Crimson** | `#8C341C` | Window headers & inactive states |
+| **Volumetric Shadow** | `#5F1906` | Depth vignette & ambient gradients |
+| **Lantern Crimson** | `#C04D2D` | Active filters & flame auras |
+| **Terracotta** | `#BD6547` | Descriptions & secondary typography |
+| **Shoji Amber Fire** | `#EB7340` | Cursor border glow & primary CTA |
+| **Golden Amber Glow**| `#DF865C` | Typography accents, icons & flame |
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js 20+
+- pnpm 9+ or 10+
+
+### Installation & Run
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+# Clone the repository
+git clone https://github.com/mmy-lana/infinity-vault.git
+
+# Navigate into directory
+cd infinity-vault
+
+# Install dependencies
+pnpm install
+
+# Start development server
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Production Build
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+pnpm build
+pnpm start
+```
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 📄 License
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This project is open source and available under the [MIT License](LICENSE).
