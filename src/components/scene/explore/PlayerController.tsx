@@ -12,6 +12,9 @@ export interface PlayerControllerProps {
   speed?: number;
   eyeHeight?: number;
   teleportPosition?: [number, number, number] | null;
+  touchMoveVector?: { x: number; y: number };
+  touchLookDelta?: { x: number; y: number };
+  isTouchDevice?: boolean;
   onLockChange?: (isLocked: boolean) => void;
 }
 
@@ -21,6 +24,9 @@ export const PlayerController: React.FC<PlayerControllerProps> = ({
   speed = 5.5,
   eyeHeight = 1.6,
   teleportPosition = null,
+  touchMoveVector = { x: 0, y: 0 },
+  touchLookDelta = { x: 0, y: 0 },
+  isTouchDevice = false,
   onLockChange,
 }) => {
   const keys = useRef({
@@ -31,6 +37,7 @@ export const PlayerController: React.FC<PlayerControllerProps> = ({
   });
 
   const controlsRef = useRef<React.ComponentRef<typeof PointerLockControls>>(null);
+  const cameraEuler = useRef(new THREE.Euler(0, 0, 0, 'YXZ'));
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -90,9 +97,19 @@ export const PlayerController: React.FC<PlayerControllerProps> = ({
   const upAxis = useRef(new THREE.Vector3(0, 1, 0));
 
   useFrame((state, delta) => {
-    if (!controlsRef.current?.isLocked) return;
+    const isLocked = controlsRef.current?.isLocked || isTouchDevice;
+    if (!isLocked) return;
 
     const { camera } = state;
+
+    // Apply touch look rotation on mobile
+    if (isTouchDevice && (touchLookDelta.x !== 0 || touchLookDelta.y !== 0)) {
+      cameraEuler.current.setFromQuaternion(camera.quaternion);
+      cameraEuler.current.y -= touchLookDelta.x;
+      cameraEuler.current.x -= touchLookDelta.y;
+      cameraEuler.current.x = Math.max(-1.25, Math.min(1.25, cameraEuler.current.x));
+      camera.quaternion.setFromEuler(cameraEuler.current);
+    }
 
     camera.getWorldDirection(forwardDir.current);
     forwardDir.current.y = 0;
@@ -102,10 +119,17 @@ export const PlayerController: React.FC<PlayerControllerProps> = ({
 
     moveVector.current.set(0, 0, 0);
 
+    // Keyboard movement
     if (keys.current.forward) moveVector.current.add(forwardDir.current);
     if (keys.current.backward) moveVector.current.sub(forwardDir.current);
     if (keys.current.right) moveVector.current.add(sideDir.current);
     if (keys.current.left) moveVector.current.sub(sideDir.current);
+
+    // Touch joystick movement
+    if (isTouchDevice && (touchMoveVector.x !== 0 || touchMoveVector.y !== 0)) {
+      moveVector.current.addScaledVector(forwardDir.current, -touchMoveVector.y);
+      moveVector.current.addScaledVector(sideDir.current, touchMoveVector.x);
+    }
 
     if (moveVector.current.lengthSq() > 0) {
       moveVector.current.normalize().multiplyScalar(speed * delta);
@@ -122,6 +146,10 @@ export const PlayerController: React.FC<PlayerControllerProps> = ({
       camera.position.y = eyeHeight;
     }
   });
+
+  if (isTouchDevice) {
+    return null;
+  }
 
   return (
     <PointerLockControls

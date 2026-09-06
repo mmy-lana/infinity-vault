@@ -8,6 +8,7 @@ import { PlayerController } from './PlayerController';
 import { ProjectMarker } from './ProjectMarker';
 import { ToriiPortal } from './ToriiPortal';
 import { ExploreHUD } from './ExploreHUD';
+import { TouchZoneController, TouchMoveVector, TouchLookDelta } from './TouchZoneController';
 import { ProjectDetailModal } from '@/components/organisms/ProjectDetailModal';
 import { PROJECTS_DATA } from '@/data/projectsData';
 import { ProjectItem } from '@/types/project';
@@ -57,8 +58,23 @@ const PlayerTrackingObserver: React.FC<{
   return null;
 };
 
+import { useSyncExternalStore } from 'react';
+
+const subscribeTouch = () => () => {};
+const getTouchSnapshot = () =>
+  typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0);
+const getTouchServerSnapshot = () => false;
+
 export const ExploreScene: React.FC = () => {
+  const isTouchDevice = useSyncExternalStore(
+    subscribeTouch,
+    getTouchSnapshot,
+    getTouchServerSnapshot
+  );
+
   const [isLocked, setIsLocked] = useState(false);
+  const [touchMove, setTouchMove] = useState<TouchMoveVector>({ x: 0, y: 0 });
+  const [touchLook, setTouchLook] = useState<TouchLookDelta>({ x: 0, y: 0 });
   const [currentFloorIdx, setCurrentFloorIdx] = useState(0);
   const [nearbyProject, setNearbyProject] = useState<ProjectItem | null>(null);
   const [activeProject, setActiveProject] = useState<ProjectItem | null>(null);
@@ -204,10 +220,22 @@ export const ExploreScene: React.FC = () => {
             boundsX={[-5.2, 5.2]}
             boundsZ={boundsZ}
             teleportPosition={teleportPos}
+            touchMoveVector={touchMove}
+            touchLookDelta={touchLook}
+            isTouchDevice={isTouchDevice}
             onLockChange={setIsLocked}
           />
         </Suspense>
       </Canvas>
+
+      {/* Dual-Zone Virtual Touch Controller on Mobile Devices */}
+      {isTouchDevice && !activeProject && (
+        <TouchZoneController
+          onMove={setTouchMove}
+          onLook={setTouchLook}
+          disabled={activeProject !== null}
+        />
+      )}
 
       <ProjectDetailModal
         project={activeProject}

@@ -4,6 +4,7 @@ import React, { useMemo } from 'react';
 import * as THREE from 'three';
 import { CorridorSegment } from './CorridorSegment';
 import { SwirlingEmbersField } from '@/components/scene/core/SwirlingEmbersField';
+import { InstancedLanterns, InstancedLanternData } from '@/components/scene/core/InstancedLanterns';
 
 export interface ModularCorridorProps {
   portalForwardZ: number;
@@ -49,6 +50,18 @@ export const ModularCorridor: React.FC<ModularCorridorProps> = ({
     return centers;
   }, [playerZ, portalForwardZ, portalBackZ, segmentLength, viewDistance]);
 
+  // Aggregate lantern positions from active segments for batch instanced rendering
+  const activeLanterns = useMemo<InstancedLanternData[]>(() => {
+    const items: InstancedLanternData[] = [];
+    for (const cz of activeSegments) {
+      items.push({ position: [-2.8, height - 1.2, cz - 4], scale: 0.8 });
+      items.push({ position: [2.8, height - 1.2, cz - 4], scale: 0.8 });
+      items.push({ position: [-2.8, height - 1.2, cz + 4], scale: 0.8 });
+      items.push({ position: [2.8, height - 1.2, cz + 4], scale: 0.8 });
+    }
+    return items;
+  }, [activeSegments, height]);
+
   return (
     <group>
       {/* Recycled Modular Corridor Slices */}
@@ -61,6 +74,9 @@ export const ModularCorridor: React.FC<ModularCorridorProps> = ({
           height={height}
         />
       ))}
+
+      {/* High-Performance Instanced Corridor Lanterns (2 Draw Calls Total) */}
+      <InstancedLanterns lanterns={activeLanterns} />
 
       {/* Far End-Cap Wall (Ahead of Forward Portal) */}
       <mesh position={[0, halfH, portalForwardZ - 2]}>
