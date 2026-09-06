@@ -11,6 +11,12 @@ export interface CastleRoomProps {
   height?: number; // Y axis default 5m
 }
 
+interface RoomDecorations {
+  pillarPositions: [number, number, number][];
+  ceilingBeams: number[];
+  hangingLanterns: [number, number, number][];
+}
+
 export const CastleRoom: React.FC<CastleRoomProps> = ({
   width = 12,
   length = 24,
@@ -20,24 +26,27 @@ export const CastleRoom: React.FC<CastleRoomProps> = ({
   const halfL = length / 2;
   const halfH = height / 2;
 
-  const pillarPositions = useMemo(() => {
-    const zSteps = [-10, -6, -2, 2, 6, 10];
+  const { pillarPositions, ceilingBeams, hangingLanterns } = useMemo<RoomDecorations>(() => {
     const pillars: [number, number, number][] = [];
-    for (const z of zSteps) {
+    const beams: number[] = [];
+    const lanterns: [number, number, number][] = [];
+
+    const zStart = Math.floor(-halfL + 2);
+    const zEnd = Math.floor(halfL - 2);
+
+    for (let z = zStart; z <= zEnd; z += 4) {
       pillars.push([-halfW + 0.15, halfH, z]);
       pillars.push([halfW - 0.15, halfH, z]);
+      beams.push(z);
     }
-    return pillars;
-  }, [halfW, halfH]);
 
-  const hangingLanterns = useMemo<[number, number, number][]>(() => {
-    return [
-      [-3, height - 1.2, -7],
-      [3, height - 1.2, -7],
-      [-3, height - 1.2, 5],
-      [3, height - 1.2, 5],
-    ];
-  }, [height]);
+    for (let z = zStart + 2; z <= zEnd - 2; z += 8) {
+      lanterns.push([-2.8, height - 1.2, z]);
+      lanterns.push([2.8, height - 1.2, z]);
+    }
+
+    return { pillarPositions: pillars, ceilingBeams: beams, hangingLanterns: lanterns };
+  }, [halfW, halfH, halfL, height]);
 
   return (
     <group>
@@ -76,7 +85,7 @@ export const CastleRoom: React.FC<CastleRoomProps> = ({
       </mesh>
 
       {/* Transverse Ceiling Timber Beams */}
-      {[-8, -4, 0, 4, 8].map((z) => (
+      {ceilingBeams.map((z) => (
         <mesh key={`beam-${z}`} position={[0, height - 0.15, z]}>
           <boxGeometry args={[width, 0.3, 0.3]} />
           <meshStandardMaterial color="#2F1A17" roughness={0.8} />

@@ -49,20 +49,32 @@ const ProximityObserver: React.FC<{
   return null;
 };
 
+import { buildFloorLayouts, FloorData } from '@/lib/exploreLayout';
+import { ToriiPortal } from './ToriiPortal';
+
 export const ExploreScene: React.FC = () => {
   const [isLocked, setIsLocked] = useState(false);
+  const [currentFloorIdx, setCurrentFloorIdx] = useState(0);
   const [nearbyProject, setNearbyProject] = useState<ProjectItem | null>(null);
   const [activeProject, setActiveProject] = useState<ProjectItem | null>(null);
+  const [teleportPos, setTeleportPos] = useState<[number, number, number] | null>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
 
-  const testMarkers = useMemo<PlacedMarker[]>(() => {
-    return [
-      { project: PROJECTS_DATA[0], position: [-4, 0, -6] }, // Markdown Live Previewer
-      { project: PROJECTS_DATA[1], position: [4, 0, -6] },  // Crypto Price Tracker Dashboard
-      { project: PROJECTS_DATA[3], position: [-4, 0, 4] },  // JSON to TypeScript Interface Converter
-      { project: PROJECTS_DATA[9], position: [4, 0, 4] },   // Rest API Response Time Benchmarker
-    ];
-  }, []);
+  const floors = useMemo<FloorData[]>(() => buildFloorLayouts(PROJECTS_DATA), []);
+  const currentFloor = floors[currentFloorIdx] || floors[0];
+
+  const nextFloor = floors[(currentFloorIdx + 1) % floors.length];
+  const prevFloor = floors[(currentFloorIdx - 1 + floors.length) % floors.length];
+
+  const handleTeleportToFloor = (targetFloorIndex: number) => {
+    setCurrentFloorIdx(targetFloorIndex);
+    setNearbyProject(null);
+    setTeleportPos([0, 1.6, 5]);
+
+    setTimeout(() => {
+      setTeleportPos(null);
+    }, 100);
+  };
 
   const openProjectModal = (project: ProjectItem) => {
     document.exitPointerLock?.();
@@ -90,28 +102,42 @@ export const ExploreScene: React.FC = () => {
     canvasElement?.requestPointerLock();
   };
 
+  const boundsZ: [number, number] = useMemo(() => {
+    return [currentFloor.portalForwardZ - 2, currentFloor.portalBackZ + 2];
+  }, [currentFloor]);
+
   return (
     <div ref={canvasRef} className="relative w-full h-full">
       <ExploreHUD
         isLocked={isLocked}
         onEnterClick={requestLock}
         discoveredCount={0}
-        totalCount={testMarkers.length}
+        totalCount={PROJECTS_DATA.length}
         nearbyProject={nearbyProject}
         onInspectNearby={handleInspectNearby}
+        floorRoman={currentFloor.floorRoman}
+        categoryTitle={currentFloor.category}
+        floorTotal={currentFloor.projects.length}
       />
 
       <Canvas
-        camera={{ position: [0, 1.6, 9], fov: 60, near: 0.1, far: 50 }}
+        camera={{ position: [0, 1.6, 5], fov: 60, near: 0.1, far: 50 }}
         gl={{ antialias: true, alpha: false, powerPreference: 'high-performance' }}
         dpr={[1, 2]}
       >
-        <CastleAtmosphere fogNear={4} fogFar={28} ambientIntensity={0.35} />
+        <CastleAtmosphere fogNear={6} fogFar={34} ambientIntensity={0.35} />
 
         <Suspense fallback={null}>
-          <CastleRoom width={12} length={24} height={5} />
+          {/* Dynamically dimensioned architectural hallway */}
+          <CastleRoom
+            key={currentFloor.id}
+            width={12}
+            length={currentFloor.corridorLength}
+            height={5}
+          />
 
-          {testMarkers.map((m) => (
+          {/* Procedurally placed real project markers for this chamber */}
+          {currentFloor.placedMarkers.map((m) => (
             <ProjectMarker
               key={m.project.id}
               project={m.project}
@@ -121,13 +147,37 @@ export const ExploreScene: React.FC = () => {
             />
           ))}
 
+          {/* Forward Gate to next chamber */}
+          <ToriiPortal
+            position={[0, 0, currentFloor.portalForwardZ]}
+            targetChamber={`CHAMBER ${nextFloor.floorRoman}`}
+            targetLabel={nextFloor.category}
+            onPassThrough={() => handleTeleportToFloor((currentFloorIdx + 1) % floors.length)}
+          />
+
+          {/* Rear Gate to previous chamber */}
+          <ToriiPortal
+            position={[0, 0, currentFloor.portalBackZ]}
+            rotation={[0, Math.PI, 0]}
+            targetChamber={`CHAMBER ${prevFloor.floorRoman}`}
+            targetLabel={prevFloor.category}
+            onPassThrough={() =>
+              handleTeleportToFloor((currentFloorIdx - 1 + floors.length) % floors.length)
+            }
+          />
+
           <ProximityObserver
-            markers={testMarkers}
+            markers={currentFloor.placedMarkers}
             threshold={2.5}
             onActiveChange={setNearbyProject}
           />
 
-          <PlayerController onLockChange={setIsLocked} />
+          <PlayerController
+            boundsX={[-5.2, 5.2]}
+            boundsZ={boundsZ}
+            teleportPosition={teleportPos}
+            onLockChange={setIsLocked}
+          />
         </Suspense>
       </Canvas>
 

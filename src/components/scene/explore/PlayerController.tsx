@@ -11,6 +11,7 @@ export interface PlayerControllerProps {
   boundsZ?: [number, number];
   speed?: number;
   eyeHeight?: number;
+  teleportPosition?: [number, number, number] | null;
   onLockChange?: (isLocked: boolean) => void;
 }
 
@@ -19,6 +20,7 @@ export const PlayerController: React.FC<PlayerControllerProps> = ({
   boundsZ = [-11.2, 11.2],
   speed = 5.5,
   eyeHeight = 1.6,
+  teleportPosition = null,
   onLockChange,
 }) => {
   const keys = useRef({
@@ -110,10 +112,15 @@ export const PlayerController: React.FC<PlayerControllerProps> = ({
       camera.position.add(moveVector.current);
     }
 
-    // Kinematic room bounds clamping
-    camera.position.x = THREE.MathUtils.clamp(camera.position.x, boundsX[0], boundsX[1]);
-    camera.position.z = THREE.MathUtils.clamp(camera.position.z, boundsZ[0], boundsZ[1]);
-    camera.position.y = eyeHeight;
+    // Handle programmatic teleportation
+    if (teleportPosition) {
+      camera.position.set(teleportPosition[0], teleportPosition[1], teleportPosition[2]);
+    } else {
+      // Kinematic room bounds clamping
+      camera.position.x = THREE.MathUtils.clamp(camera.position.x, boundsX[0], boundsX[1]);
+      camera.position.z = THREE.MathUtils.clamp(camera.position.z, boundsZ[0], boundsZ[1]);
+      camera.position.y = eyeHeight;
+    }
   });
 
   return (

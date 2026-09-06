@@ -13,24 +13,32 @@ export interface ExploreHUDProps {
   totalCount?: number;
   nearbyProject?: ProjectItem | null;
   onInspectNearby?: () => void;
+  floorRoman?: string;
+  categoryTitle?: string;
+  floorTotal?: number;
 }
 
 export const ExploreHUD: React.FC<ExploreHUDProps> = ({
   isLocked,
   onEnterClick,
   discoveredCount = 0,
-  totalCount = 4,
+  totalCount = 112,
   nearbyProject = null,
   onInspectNearby,
+  floorRoman = 'I',
+  categoryTitle = 'Developer Tooling',
+  floorTotal = 15,
 }) => {
   return (
     <>
       {/* Top Left: Chamber Designation */}
       <div className="fixed top-5 left-6 z-30 pointer-events-none font-mono text-xs text-[#c9bda6] tracking-wide">
         <div className="flex items-center gap-2 text-[11px] uppercase">
-          <span className="text-[#EB7340] font-bold">CHAMBER I</span>
+          <span className="text-[#EB7340] font-bold">CHAMBER {floorRoman}</span>
           <span className="text-[#5D3025]">•</span>
-          <span>Architectural Proving Grounds</span>
+          <span>{categoryTitle}</span>
+          <span className="text-[#5D3025]">/</span>
+          <span className="text-[#BD6547] text-[10px]">{floorTotal} Relics</span>
         </div>
       </div>
 
