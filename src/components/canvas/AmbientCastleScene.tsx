@@ -2,8 +2,9 @@
 
 import React, { Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { FloatingLanternsField } from './FloatingLanternsField';
-import { SwirlingEmbersField } from './SwirlingEmbersField';
+import { CastleAtmosphere } from '@/components/scene/core/CastleAtmosphere';
+import { FloatingLanternsField } from '@/components/scene/core/FloatingLanternsField';
+import { SwirlingEmbersField } from '@/components/scene/core/SwirlingEmbersField';
 
 export const AmbientCastleScene: React.FC = () => {
   return (
@@ -20,15 +21,7 @@ export const AmbientCastleScene: React.FC = () => {
         }}
         dpr={[1, 2]}
       >
-        {/* Volumetric Mugen Castle Atmosphere Fog */}
-        <color attach="background" args={['#140805']} />
-        <fog attach="fog" args={['#140805', 10, 32]} />
-
-        {/* Ambient & Warm Timber Frame Lighting */}
-        <ambientLight intensity={0.4} color="#5D3025" />
-        <directionalLight position={[5, 10, 5]} intensity={0.6} color="#DF865C" />
-        <pointLight position={[0, -5, 5]} intensity={1.5} color="#C04D2D" distance={25} />
-        <pointLight position={[0, 8, 8]} intensity={1.2} color="#EB7340" distance={30} />
+        <CastleAtmosphere />
 
         <Suspense fallback={null}>
           <FloatingLanternsField count={22} />
@@ -36,7 +29,6 @@ export const AmbientCastleScene: React.FC = () => {
         </Suspense>
       </Canvas>
 
-      {/* Shoji Grid Overlay & Depth Vignette */}
       <div className="absolute inset-0 mugen-grid pointer-events-none opacity-40" />
       <div className="absolute inset-0 mugen-radial-vignette pointer-events-none" />
     </div>
