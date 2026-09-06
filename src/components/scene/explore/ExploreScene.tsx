@@ -1,6 +1,6 @@
 'use client';
 
-import React, { Suspense, useState, useRef, useEffect, useMemo } from 'react';
+import React, { Suspense, useState, useRef, useEffect, useMemo, useSyncExternalStore } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { CastleAtmosphere } from '@/components/scene/core/CastleAtmosphere';
 import { ModularCorridor } from './ModularCorridor';
@@ -14,12 +14,23 @@ import { PROJECTS_DATA } from '@/data/projectsData';
 import { ProjectItem } from '@/types/project';
 import { buildFloorLayouts, FloorData, PlacedProjectMarker } from '@/lib/exploreLayout';
 
+import { useExploreProgression } from '@/lib/useExploreProgression';
+
+const subscribeTouch = () => () => {};
+
+const getTouchSnapshot = (): boolean =>
+  typeof window !== 'undefined' &&
+  ('ontouchstart' in window || (typeof navigator !== 'undefined' && navigator.maxTouchPoints > 0));
+
+const getTouchServerSnapshot = (): boolean => false;
+
 const PlayerTrackingObserver: React.FC<{
   markers: PlacedProjectMarker[];
   threshold?: number;
   onActiveChange: (project: ProjectItem | null) => void;
   onSegmentChange: (quantizedZ: number) => void;
-}> = ({ markers, threshold = 2.5, onActiveChange, onSegmentChange }) => {
+  onDiscovered: (id: string) => void;
+}> = ({ markers, threshold = 2.5, onActiveChange, onSegmentChange, onDiscovered }) => {
   const activeIdRef = useRef<string | null>(null);
   const lastQuantizedZRef = useRef<number>(0);
 
@@ -48,6 +59,10 @@ const PlayerTrackingObserver: React.FC<{
       }
     }
 
+    if (closestProject) {
+      onDiscovered(closestProject.id);
+    }
+
     const nextId = closestProject ? closestProject.id : null;
     if (nextId !== activeIdRef.current) {
       activeIdRef.current = nextId;
@@ -58,19 +73,14 @@ const PlayerTrackingObserver: React.FC<{
   return null;
 };
 
-import { useSyncExternalStore } from 'react';
-
-const subscribeTouch = () => () => {};
-const getTouchSnapshot = () =>
-  typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0);
-const getTouchServerSnapshot = () => false;
-
 export const ExploreScene: React.FC = () => {
-  const isTouchDevice = useSyncExternalStore(
+  const isTouchDevice = useSyncExternalStore<boolean>(
     subscribeTouch,
     getTouchSnapshot,
     getTouchServerSnapshot
   );
+
+  const { discoveredCount, markDiscovered } = useExploreProgression();
 
   const [isLocked, setIsLocked] = useState(false);
   const [touchMove, setTouchMove] = useState<TouchMoveVector>({ x: 0, y: 0 });
@@ -147,7 +157,7 @@ export const ExploreScene: React.FC = () => {
       <ExploreHUD
         isLocked={isLocked}
         onEnterClick={requestLock}
-        discoveredCount={0}
+        discoveredCount={discoveredCount}
         totalCount={PROJECTS_DATA.length}
         nearbyProject={nearbyProject}
         onInspectNearby={handleInspectNearby}
@@ -214,6 +224,7 @@ export const ExploreScene: React.FC = () => {
             threshold={2.5}
             onActiveChange={setNearbyProject}
             onSegmentChange={setPlayerQuantizedZ}
+            onDiscovered={markDiscovered}
           />
 
           <PlayerController

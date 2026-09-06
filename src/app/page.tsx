@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Sparkles, Terminal, Code2, Compass, Layers } from 'lucide-react';
+import { Sparkles, Terminal, Code2, Compass, Layers, Castle } from 'lucide-react';
 import { PROJECTS_DATA } from '@/data/projectsData';
 import { ProjectItem, ProjectCategory, TechStackFamily, ProjectStatus } from '@/types/project';
 import { AmbientCastleScene } from '@/components/canvas/AmbientCastleScene';
@@ -129,6 +130,17 @@ export default function Home() {
           >
             Explore 110+ Project Bento
           </Button>
+
+          <Link href="/explore" className="w-full sm:w-auto">
+            <Button
+              variant="timber"
+              size="lg"
+              className="w-full sm:w-auto"
+              icon={<Castle className="w-4 h-4 text-shoji-amber" />}
+            >
+              Enter the Castle
+            </Button>
+          </Link>
 
           <Button
             variant="secondary"
