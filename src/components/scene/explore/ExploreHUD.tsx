@@ -4,11 +4,15 @@ import React from 'react';
 import Link from 'next/link';
 import { ArrowLeft, Compass } from 'lucide-react';
 
+import { ProjectItem } from '@/types/project';
+
 export interface ExploreHUDProps {
   isLocked: boolean;
   onEnterClick: () => void;
   discoveredCount?: number;
   totalCount?: number;
+  nearbyProject?: ProjectItem | null;
+  onInspectNearby?: () => void;
 }
 
 export const ExploreHUD: React.FC<ExploreHUDProps> = ({
@@ -16,6 +20,8 @@ export const ExploreHUD: React.FC<ExploreHUDProps> = ({
   onEnterClick,
   discoveredCount = 0,
   totalCount = 4,
+  nearbyProject = null,
+  onInspectNearby,
 }) => {
   return (
     <>
@@ -47,6 +53,20 @@ export const ExploreHUD: React.FC<ExploreHUDProps> = ({
       {/* Center Crosshair Dot */}
       {isLocked && (
         <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-white/60 pointer-events-none z-30" />
+      )}
+
+      {/* Proximity Interaction Prompt (Ember Minimal) */}
+      {isLocked && nearbyProject && (
+        <button
+          type="button"
+          onClick={onInspectNearby}
+          className="fixed bottom-16 left-1/2 -translate-x-1/2 z-40 font-mono text-xs text-[#f2e9d8] bg-[#140805]/90 hover:bg-[#2F1A17] px-3.5 py-1.5 border border-[#EB7340]/60 rounded shadow-[0_0_15px_rgba(235,115,64,0.35)] flex items-center gap-2 cursor-pointer transition-all animate-pulse"
+        >
+          <span className="inline-block border border-[#d8cfc0]/60 rounded px-1.5 py-0.2 text-[10px] text-[#EB7340] font-bold">
+            E
+          </span>
+          <span>inspect {nearbyProject.title}</span>
+        </button>
       )}
 
       {/* Bottom Center Controls Guide */}

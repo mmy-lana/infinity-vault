@@ -1,47 +1,89 @@
 'use client';
 
-import React, { Suspense, useState, useRef } from 'react';
-import { Canvas } from '@react-three/fiber';
+/* eslint-disable react-hooks/immutability */
+import React, { Suspense, useState, useRef, useEffect, useMemo } from 'react';
+import { Canvas, useFrame } from '@react-three/fiber';
 import { CastleAtmosphere } from '@/components/scene/core/CastleAtmosphere';
 import { CastleRoom } from './CastleRoom';
 import { PlayerController } from './PlayerController';
-import { DummyMarker } from './DummyMarker';
+import { ProjectMarker } from './ProjectMarker';
 import { ExploreHUD } from './ExploreHUD';
+import { ProjectDetailModal } from '@/components/organisms/ProjectDetailModal';
+import { PROJECTS_DATA } from '@/data/projectsData';
+import { ProjectItem } from '@/types/project';
 
-const DUMMY_MARKERS = [
-  {
-    id: 'dummy-1',
-    index: 1,
-    label: 'Prototype Request Engine',
-    category: 'Developer Tooling',
-    position: [-4, 0, -6] as [number, number, number],
-  },
-  {
-    id: 'dummy-2',
-    index: 2,
-    label: 'Heap Profiler Rig',
-    category: 'Utility & System',
-    position: [4, 0, -6] as [number, number, number],
-  },
-  {
-    id: 'dummy-3',
-    index: 3,
-    label: 'WebGL Luminous Matrix',
-    category: 'Interactive UI / Creative',
-    position: [-4, 0, 4] as [number, number, number],
-  },
-  {
-    id: 'dummy-4',
-    index: 4,
-    label: 'Async Pipeline Dispatcher',
-    category: 'Fullstack Application',
-    position: [4, 0, 4] as [number, number, number],
-  },
-];
+interface PlacedMarker {
+  project: ProjectItem;
+  position: [number, number, number];
+}
+
+const ProximityObserver: React.FC<{
+  markers: PlacedMarker[];
+  threshold?: number;
+  onActiveChange: (project: ProjectItem | null) => void;
+}> = ({ markers, threshold = 2.5, onActiveChange }) => {
+  const activeIdRef = useRef<string | null>(null);
+
+  useFrame((state) => {
+    let closestProject: ProjectItem | null = null;
+    let minDistance = threshold;
+
+    for (const item of markers) {
+      const dist = Math.hypot(
+        state.camera.position.x - item.position[0],
+        state.camera.position.z - item.position[2]
+      );
+      if (dist < minDistance) {
+        minDistance = dist;
+        closestProject = item.project;
+      }
+    }
+
+    const nextId = closestProject ? closestProject.id : null;
+    if (nextId !== activeIdRef.current) {
+      activeIdRef.current = nextId;
+      onActiveChange(closestProject);
+    }
+  });
+
+  return null;
+};
 
 export const ExploreScene: React.FC = () => {
   const [isLocked, setIsLocked] = useState(false);
+  const [nearbyProject, setNearbyProject] = useState<ProjectItem | null>(null);
+  const [activeProject, setActiveProject] = useState<ProjectItem | null>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
+
+  const testMarkers = useMemo<PlacedMarker[]>(() => {
+    return [
+      { project: PROJECTS_DATA[0], position: [-4, 0, -6] }, // Markdown Live Previewer
+      { project: PROJECTS_DATA[1], position: [4, 0, -6] },  // Crypto Price Tracker Dashboard
+      { project: PROJECTS_DATA[3], position: [-4, 0, 4] },  // JSON to TypeScript Interface Converter
+      { project: PROJECTS_DATA[9], position: [4, 0, 4] },   // Rest API Response Time Benchmarker
+    ];
+  }, []);
+
+  const openProjectModal = (project: ProjectItem) => {
+    document.exitPointerLock?.();
+    setActiveProject(project);
+  };
+
+  const handleInspectNearby = () => {
+    if (nearbyProject) {
+      openProjectModal(nearbyProject);
+    }
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.code === 'KeyE' && nearbyProject && !activeProject) {
+        openProjectModal(nearbyProject);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [nearbyProject, activeProject]);
 
   const requestLock = () => {
     const canvasElement = canvasRef.current?.querySelector('canvas');
@@ -54,7 +96,9 @@ export const ExploreScene: React.FC = () => {
         isLocked={isLocked}
         onEnterClick={requestLock}
         discoveredCount={0}
-        totalCount={DUMMY_MARKERS.length}
+        totalCount={testMarkers.length}
+        nearbyProject={nearbyProject}
+        onInspectNearby={handleInspectNearby}
       />
 
       <Canvas
@@ -66,12 +110,31 @@ export const ExploreScene: React.FC = () => {
 
         <Suspense fallback={null}>
           <CastleRoom width={12} length={24} height={5} />
-          {DUMMY_MARKERS.map((m) => (
-            <DummyMarker key={m.id} {...m} />
+
+          {testMarkers.map((m) => (
+            <ProjectMarker
+              key={m.project.id}
+              project={m.project}
+              position={m.position}
+              isNearby={nearbyProject?.id === m.project.id}
+              onInspect={openProjectModal}
+            />
           ))}
+
+          <ProximityObserver
+            markers={testMarkers}
+            threshold={2.5}
+            onActiveChange={setNearbyProject}
+          />
+
           <PlayerController onLockChange={setIsLocked} />
         </Suspense>
       </Canvas>
+
+      <ProjectDetailModal
+        project={activeProject}
+        onClose={() => setActiveProject(null)}
+      />
     </div>
   );
 };
