@@ -1,37 +1,45 @@
 'use client';
 
-/* eslint-disable react-hooks/immutability */
 import React, { Suspense, useState, useRef, useEffect, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { CastleAtmosphere } from '@/components/scene/core/CastleAtmosphere';
-import { CastleRoom } from './CastleRoom';
+import { ModularCorridor } from './ModularCorridor';
 import { PlayerController } from './PlayerController';
 import { ProjectMarker } from './ProjectMarker';
+import { ToriiPortal } from './ToriiPortal';
 import { ExploreHUD } from './ExploreHUD';
 import { ProjectDetailModal } from '@/components/organisms/ProjectDetailModal';
 import { PROJECTS_DATA } from '@/data/projectsData';
 import { ProjectItem } from '@/types/project';
+import { buildFloorLayouts, FloorData, PlacedProjectMarker } from '@/lib/exploreLayout';
 
-interface PlacedMarker {
-  project: ProjectItem;
-  position: [number, number, number];
-}
-
-const ProximityObserver: React.FC<{
-  markers: PlacedMarker[];
+const PlayerTrackingObserver: React.FC<{
+  markers: PlacedProjectMarker[];
   threshold?: number;
   onActiveChange: (project: ProjectItem | null) => void;
-}> = ({ markers, threshold = 2.5, onActiveChange }) => {
+  onSegmentChange: (quantizedZ: number) => void;
+}> = ({ markers, threshold = 2.5, onActiveChange, onSegmentChange }) => {
   const activeIdRef = useRef<string | null>(null);
+  const lastQuantizedZRef = useRef<number>(0);
 
   useFrame((state) => {
+    const camZ = state.camera.position.z;
+
+    // Quantize position into 8m steps to update dynamic module pool without per-frame React re-renders
+    const quantizedZ = Math.round(camZ / 8) * 8;
+    if (quantizedZ !== lastQuantizedZRef.current) {
+      lastQuantizedZRef.current = quantizedZ;
+      onSegmentChange(quantizedZ);
+    }
+
+    // Proximity detection for project inspection
     let closestProject: ProjectItem | null = null;
     let minDistance = threshold;
 
     for (const item of markers) {
       const dist = Math.hypot(
         state.camera.position.x - item.position[0],
-        state.camera.position.z - item.position[2]
+        camZ - item.position[2]
       );
       if (dist < minDistance) {
         minDistance = dist;
@@ -49,15 +57,14 @@ const ProximityObserver: React.FC<{
   return null;
 };
 
-import { buildFloorLayouts, FloorData } from '@/lib/exploreLayout';
-import { ToriiPortal } from './ToriiPortal';
-
 export const ExploreScene: React.FC = () => {
   const [isLocked, setIsLocked] = useState(false);
   const [currentFloorIdx, setCurrentFloorIdx] = useState(0);
   const [nearbyProject, setNearbyProject] = useState<ProjectItem | null>(null);
   const [activeProject, setActiveProject] = useState<ProjectItem | null>(null);
   const [teleportPos, setTeleportPos] = useState<[number, number, number] | null>(null);
+  const [playerQuantizedZ, setPlayerQuantizedZ] = useState(0);
+  const [isFlashing, setIsFlashing] = useState(false);
   const canvasRef = useRef<HTMLDivElement>(null);
 
   const floors = useMemo<FloorData[]>(() => buildFloorLayouts(PROJECTS_DATA), []);
@@ -66,13 +73,19 @@ export const ExploreScene: React.FC = () => {
   const nextFloor = floors[(currentFloorIdx + 1) % floors.length];
   const prevFloor = floors[(currentFloorIdx - 1 + floors.length) % floors.length];
 
-  const handleTeleportToFloor = (targetFloorIndex: number) => {
-    setCurrentFloorIdx(targetFloorIndex);
+  const handleTeleportToFloor = (targetFloorIndex: number, entryZ = 5) => {
+    setIsFlashing(true);
     setNearbyProject(null);
-    setTeleportPos([0, 1.6, 5]);
 
     setTimeout(() => {
-      setTeleportPos(null);
+      setCurrentFloorIdx(targetFloorIndex);
+      setPlayerQuantizedZ(entryZ);
+      setTeleportPos([0, 1.6, entryZ]);
+
+      setTimeout(() => {
+        setTeleportPos(null);
+        setIsFlashing(false);
+      }, 100);
     }, 100);
   };
 
@@ -103,8 +116,15 @@ export const ExploreScene: React.FC = () => {
   };
 
   const boundsZ: [number, number] = useMemo(() => {
-    return [currentFloor.portalForwardZ - 2, currentFloor.portalBackZ + 2];
+    return [currentFloor.portalForwardZ - 1.5, currentFloor.portalBackZ + 1.5];
   }, [currentFloor]);
+
+  // Dynamically swap markers based on camera distance (render active window only)
+  const visibleMarkers = useMemo<PlacedProjectMarker[]>(() => {
+    return currentFloor.placedMarkers.filter(
+      (m: PlacedProjectMarker) => Math.abs(m.position[2] - playerQuantizedZ) <= 28
+    );
+  }, [currentFloor.placedMarkers, playerQuantizedZ]);
 
   return (
     <div ref={canvasRef} className="relative w-full h-full">
@@ -118,6 +138,7 @@ export const ExploreScene: React.FC = () => {
         floorRoman={currentFloor.floorRoman}
         categoryTitle={currentFloor.category}
         floorTotal={currentFloor.projects.length}
+        isFlashing={isFlashing}
       />
 
       <Canvas
@@ -125,19 +146,22 @@ export const ExploreScene: React.FC = () => {
         gl={{ antialias: true, alpha: false, powerPreference: 'high-performance' }}
         dpr={[1, 2]}
       >
-        <CastleAtmosphere fogNear={6} fogFar={34} ambientIntensity={0.35} />
+        <CastleAtmosphere fogNear={6} fogFar={32} ambientIntensity={0.35} />
 
         <Suspense fallback={null}>
-          {/* Dynamically dimensioned architectural hallway */}
-          <CastleRoom
-            key={currentFloor.id}
+          {/* Recycled physical hallway modules centered around player window */}
+          <ModularCorridor
+            portalForwardZ={currentFloor.portalForwardZ}
+            portalBackZ={currentFloor.portalBackZ}
+            playerZ={playerQuantizedZ}
             width={12}
-            length={currentFloor.corridorLength}
             height={5}
+            segmentLength={16}
+            viewDistance={28}
           />
 
-          {/* Procedurally placed real project markers for this chamber */}
-          {currentFloor.placedMarkers.map((m) => (
+          {/* Dynamically swapped visible project markers */}
+          {visibleMarkers.map((m) => (
             <ProjectMarker
               key={m.project.id}
               project={m.project}
@@ -147,29 +171,33 @@ export const ExploreScene: React.FC = () => {
             />
           ))}
 
-          {/* Forward Gate to next chamber */}
+          {/* Forward Gate (loops Chamber IV -> Chamber I) */}
           <ToriiPortal
             position={[0, 0, currentFloor.portalForwardZ]}
             targetChamber={`CHAMBER ${nextFloor.floorRoman}`}
             targetLabel={nextFloor.category}
-            onPassThrough={() => handleTeleportToFloor((currentFloorIdx + 1) % floors.length)}
+            onPassThrough={() => handleTeleportToFloor((currentFloorIdx + 1) % floors.length, 5)}
           />
 
-          {/* Rear Gate to previous chamber */}
+          {/* Rear Gate (loops Chamber I -> Chamber IV) */}
           <ToriiPortal
             position={[0, 0, currentFloor.portalBackZ]}
             rotation={[0, Math.PI, 0]}
             targetChamber={`CHAMBER ${prevFloor.floorRoman}`}
             targetLabel={prevFloor.category}
             onPassThrough={() =>
-              handleTeleportToFloor((currentFloorIdx - 1 + floors.length) % floors.length)
+              handleTeleportToFloor(
+                (currentFloorIdx - 1 + floors.length) % floors.length,
+                prevFloor.portalForwardZ + 4
+              )
             }
           />
 
-          <ProximityObserver
+          <PlayerTrackingObserver
             markers={currentFloor.placedMarkers}
             threshold={2.5}
             onActiveChange={setNearbyProject}
+            onSegmentChange={setPlayerQuantizedZ}
           />
 
           <PlayerController

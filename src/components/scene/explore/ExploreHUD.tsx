@@ -16,6 +16,7 @@ export interface ExploreHUDProps {
   floorRoman?: string;
   categoryTitle?: string;
   floorTotal?: number;
+  isFlashing?: boolean;
 }
 
 export const ExploreHUD: React.FC<ExploreHUDProps> = ({
@@ -28,9 +29,21 @@ export const ExploreHUD: React.FC<ExploreHUDProps> = ({
   floorRoman = 'I',
   categoryTitle = 'Developer Tooling',
   floorTotal = 15,
+  isFlashing = false,
 }) => {
   return (
     <>
+      {/* 0.2s Amber Portal Teleport Transition Flash */}
+      <div
+        className={`fixed inset-0 z-50 pointer-events-none transition-opacity duration-150 ease-out ${
+          isFlashing ? 'opacity-100' : 'opacity-0'
+        }`}
+        style={{
+          background:
+            'radial-gradient(circle at 50% 50%, rgba(235,115,64,0.92) 0%, rgba(192,77,45,0.96) 55%, #140805 100%)',
+        }}
+      />
+
       {/* Top Left: Chamber Designation */}
       <div className="fixed top-5 left-6 z-30 pointer-events-none font-mono text-xs text-[#c9bda6] tracking-wide">
         <div className="flex items-center gap-2 text-[11px] uppercase">
