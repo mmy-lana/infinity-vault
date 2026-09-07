@@ -54,8 +54,8 @@ export const CastleRoom: React.FC<CastleRoomProps> = ({
       <mesh position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
         <planeGeometry args={[width, length]} />
         <meshStandardMaterial
-          color="#1b0e0b"
-          roughness={0.85}
+          color="#281512"
+          roughness={0.8}
           metalness={0.15}
         />
       </mesh>

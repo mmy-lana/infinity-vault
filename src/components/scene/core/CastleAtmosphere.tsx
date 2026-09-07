@@ -15,9 +15,9 @@ export interface CastleAtmosphereProps {
 export const CastleAtmosphere: React.FC<CastleAtmosphereProps> = ({
   fogColor = '#140805',
   fogNear = 10,
-  fogFar = 32,
+  fogFar = 40,
   ambientColor = '#5D3025',
-  ambientIntensity = 0.4,
+  ambientIntensity = 0.5,
   directionalColor = '#DF865C',
   directionalIntensity = 0.6,
 }) => {

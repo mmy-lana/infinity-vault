@@ -185,7 +185,7 @@ export const ExploreScene: React.FC = () => {
         gl={{ antialias: true, alpha: false, powerPreference: 'high-performance' }}
         dpr={[1, 2]}
       >
-        <CastleAtmosphere fogNear={6} fogFar={32} ambientIntensity={0.35} />
+        <CastleAtmosphere fogNear={6} fogFar={40} ambientIntensity={0.5} />
 
         <Suspense fallback={null}>
           {/* Recycled physical hallway modules centered around player window */}
