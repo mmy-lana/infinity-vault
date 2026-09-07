@@ -38,7 +38,7 @@ const PlayerTrackingObserver: React.FC<{
     const camZ = state.camera.position.z;
 
     // Quantize position into 8m steps to update dynamic module pool without per-frame React re-renders
-    const quantizedZ = Math.round(camZ / 8) * 8;
+    const quantizedZ = Math.round(camZ / 16) * 16;
     if (quantizedZ !== lastQuantizedZRef.current) {
       lastQuantizedZRef.current = quantizedZ;
       onSegmentChange(quantizedZ);
@@ -120,6 +120,16 @@ export const ExploreScene: React.FC = () => {
     setActiveProject(project);
   };
 
+  const requestLock = () => {
+    const canvasElement = canvasRef.current?.querySelector('canvas');
+    canvasElement?.requestPointerLock();
+  };
+
+  const closeProjectModal = () => {
+    setActiveProject(null);
+    requestLock();
+  };
+
   const handleInspectNearby = () => {
     if (nearbyProject) {
       openProjectModal(nearbyProject);
@@ -131,28 +141,13 @@ export const ExploreScene: React.FC = () => {
       if (e.code === 'KeyE' && nearbyProject && !activeProject) {
         openProjectModal(nearbyProject);
       }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [nearbyProject, activeProject]);
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.code === 'KeyE' && nearbyProject && !activeProject) {
-        openProjectModal(nearbyProject);
-      }
       if (e.code === 'Escape' && activeProject) {
-        setActiveProject(null);
+        closeProjectModal();
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [nearbyProject, activeProject]);
-
-  const requestLock = () => {
-    const canvasElement = canvasRef.current?.querySelector('canvas');
-    canvasElement?.requestPointerLock();
-  };
 
   const boundsZ: [number, number] = useMemo(() => {
     return [currentFloor.portalForwardZ - 1.5, currentFloor.portalBackZ + 1.5];
@@ -183,7 +178,7 @@ export const ExploreScene: React.FC = () => {
       <Canvas
         camera={{ position: [0, 1.6, 5], fov: 60, near: 0.1, far: 50 }}
         gl={{ antialias: true, alpha: false, powerPreference: 'high-performance' }}
-        dpr={[1, 2]}
+        dpr={[1, 1.5]}
       >
         <CastleAtmosphere fogNear={6} fogFar={40} ambientIntensity={0.5} />
 
@@ -263,7 +258,7 @@ export const ExploreScene: React.FC = () => {
 
       <ProjectDetailModal
         project={activeProject}
-        onClose={() => setActiveProject(null)}
+        onClose={closeProjectModal}
       />
     </div>
   );
