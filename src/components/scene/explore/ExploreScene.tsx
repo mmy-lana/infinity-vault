@@ -1,6 +1,7 @@
 'use client';
 
 import React, { Suspense, useState, useRef, useEffect, useMemo, useSyncExternalStore } from 'react';
+import { useRouter } from 'next/navigation';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { CastleAtmosphere } from '@/components/scene/core/CastleAtmosphere';
 import { ModularCorridor } from './ModularCorridor';
@@ -74,6 +75,7 @@ const PlayerTrackingObserver: React.FC<{
 };
 
 export const ExploreScene: React.FC = () => {
+  const router = useRouter();
   const isTouchDevice = useSyncExternalStore<boolean>(
     subscribeTouch,
     getTouchSnapshot,
@@ -144,10 +146,14 @@ export const ExploreScene: React.FC = () => {
       if (e.code === 'Escape' && activeProject) {
         closeProjectModal();
       }
+      if (e.code === 'KeyQ' && !activeProject) {
+        document.exitPointerLock?.();
+        router.push('/');
+      }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [nearbyProject, activeProject]);
+  }, [nearbyProject, activeProject, router]);
 
   const boundsZ: [number, number] = useMemo(() => {
     return [currentFloor.portalForwardZ - 1.5, currentFloor.portalBackZ + 1.5];
