@@ -1,4 +1,4 @@
-# 🏯 MMYLANA // 無限城 — Ambient Mugen Bento Stream
+# MMYLANA // 無限城 — Ambient Mugen Bento Stream
 
 [![Next.js 16](https://img.shields.io/badge/Next.js-16-black?style=flat-square&logo=next.js)](https://nextjs.org/)
 [![React 19](https://img.shields.io/badge/React-19-black?style=flat-square&logo=react)](https://react.dev/)
@@ -6,25 +6,29 @@
 [![Tailwind CSS v4](https://img.shields.io/badge/Tailwind-v4-black?style=flat-square&logo=tailwindcss)](https://tailwindcss.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-EB7340.svg?style=flat-square)](LICENSE)
 
-An ambient, inertia-driven infinite Bento catalog featuring **110+ crafted web applications, developer tooling, and fullstack platforms** layered over a reactive 3D WebGL Mugen Castle scene with floating paper lanterns and upward swirling embers.
+An ambient, inertia-driven continuous Bento catalog and 3D spatial traversal engine featuring **112+ crafted web applications, developer tooling, and fullstack platforms** layered over a reactive WebGL Mugen Castle scene with floating lanterns and upward swirling embers.
 
 Deployed at [`portfolio.mmylana.my.id`](https://portfolio.mmylana.my.id) (Counterpart to [`mmylana.my.id`](https://mmylana.my.id)).
 
 ---
 
-## ⚡ Architectural Highlights
+## Architectural Highlights
 
+- **First-Person Spatial Traversal (`/explore`)**:
+  - First-person walking traversal through 4 procedural chambers (Developer Tooling, Fullstack, Creative UI, Utilities).
+  - Depth-occluded diegetic 3D HTML marker billboards, Torii gate chamber teleports, and virtual touch joystick controls.
+  - Zero-allocation modular corridor recycling, instanced lantern batching, and local storage discovery progression.
 - **Flagship Core Diagnostic Sanctuary**:
   - [`fetch-doctor`](https://github.com/mmy-lana/fetch-doctor): Zero-dependency, SOLID HTTP request profiler, zombie fetch detector, and CDP network audit suite.
   - [`leak-doctor`](https://github.com/mmy-lana/leak-doctor): Zero-dependency frontend memory leak diagnostic engine with `WeakRef` and `FinalizationRegistry` heap assertions.
-- **110+ Project Catalog Engine**: Spanning Developer Tooling, Fullstack Applications (Node.js/Express, NestJS, FastAPI, Django, Go Gin, ASP.NET Core 9, Spring Boot 3, Rails, Rust Axum, Laravel 11), Creative UIs, and Utilities.
-- **3D Mugen WebGL Atmosphere**: `@react-three/fiber` floating lanterns and scroll-velocity reactive embers.
+- **112+ Project Catalog Engine**: Spanning Developer Tooling, Fullstack Applications (Node.js/Express, NestJS, FastAPI, Django, Go Gin, ASP.NET Core 9, Spring Boot 3, Rails, Rust Axum, Laravel 11), Creative UIs, and Utilities.
+- **3D Mugen WebGL Atmosphere**: `@react-three/fiber` floating lanterns and scroll-velocity reactive embers with calibrated ambient falloff.
 - **Micro-Interactions**: 3D gyro tilt cards, cursor-tracking amber border glows (`#EB7340`), command palette (`⌘K`), and drawer inspector with live clone snippets.
 - **Smooth Inertia Scroll**: Native physics-driven scroll wrapper powered by `lenis`.
 
 ---
 
-## 🎨 10-Color Mugen Castle Design System
+## 10-Color Mugen Castle Design System
 
 | Token | Hex Code | Role |
 | :--- | :--- | :--- |
@@ -41,7 +45,7 @@ Deployed at [`portfolio.mmylana.my.id`](https://portfolio.mmylana.my.id) (Counte
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 - Node.js 20+
@@ -74,6 +78,6 @@ pnpm start
 
 ---
 
-## 📄 License
+## License
 
 This project is open source and available under the [MIT License](LICENSE).
