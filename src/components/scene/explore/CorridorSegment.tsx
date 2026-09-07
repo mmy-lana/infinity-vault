@@ -29,7 +29,13 @@ export const CorridorSegment: React.FC<CorridorSegmentProps> = ({
       {/* Floor Slab */}
       <mesh position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
         <planeGeometry args={[width, length]} />
-        <meshStandardMaterial color="#281512" roughness={0.8} metalness={0.15} />
+        <meshStandardMaterial
+          color="#3d2018"
+          emissive="#5D3025"
+          emissiveIntensity={0.18}
+          roughness={0.85}
+          metalness={0}
+        />
       </mesh>
 
       {/* Outer Timber Base Runners */}
