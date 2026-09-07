@@ -65,6 +65,7 @@ export const DummyMarker: React.FC<DummyMarkerProps> = ({
         distanceFactor={8}
         transform
         sprite
+        occlude
         className="pointer-events-none select-none"
       >
         <div className="flex flex-col items-center gap-1 font-mono text-[10px] whitespace-nowrap">

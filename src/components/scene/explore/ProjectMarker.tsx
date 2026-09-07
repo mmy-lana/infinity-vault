@@ -72,6 +72,7 @@ export const ProjectMarker: React.FC<ProjectMarkerProps> = ({
         distanceFactor={8}
         transform
         sprite
+        occlude
         className="pointer-events-none select-none"
       >
         <div

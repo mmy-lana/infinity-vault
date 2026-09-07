@@ -96,7 +96,15 @@ export const ToriiPortal: React.FC<ToriiPortalProps> = ({
       <pointLight position={[0, 2.5, 0]} color="#EB7340" intensity={3.5} distance={8} decay={2} />
 
       {/* Chamber Navigation Billboard */}
-      <Html position={[0, 4.8, 0]} center transform sprite distanceFactor={9} className="select-none pointer-events-none">
+      <Html
+        position={[0, 4.8, 0]}
+        center
+        transform
+        sprite
+        distanceFactor={9}
+        occlude
+        className="select-none pointer-events-none"
+      >
         <div className="flex flex-col items-center gap-0.5 font-mono text-center whitespace-nowrap">
           <span className="text-[9px] uppercase tracking-widest text-[#EB7340] font-bold px-2 py-0.5 rounded bg-[#140805]/95 border border-[#5D3025]">
             {targetChamber}

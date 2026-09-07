@@ -136,6 +136,19 @@ export const ExploreScene: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [nearbyProject, activeProject]);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.code === 'KeyE' && nearbyProject && !activeProject) {
+        openProjectModal(nearbyProject);
+      }
+      if (e.code === 'Escape' && activeProject) {
+        setActiveProject(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [nearbyProject, activeProject]);
+
   const requestLock = () => {
     const canvasElement = canvasRef.current?.querySelector('canvas');
     canvasElement?.requestPointerLock();
